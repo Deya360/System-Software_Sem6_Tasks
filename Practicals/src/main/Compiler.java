@@ -7,9 +7,9 @@ import main.ast.VarNode;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 public class Compiler {
     private final String SP = "    ";
@@ -35,7 +35,7 @@ public class Compiler {
     private void compileExpr(ExprNode node) {
         if (node instanceof NumberNode) {
             NumberNode num = (NumberNode) node;
-            append("push dword " + num.number.text);
+            append(SP + "push dword " + num.number.text);
 
         } else if (node instanceof BinOpNode) {
             BinOpNode binOp = (BinOpNode) node;
@@ -69,7 +69,7 @@ public class Compiler {
     }
 
 
-    private void compile32(ExprNode node) {
+    public void compile32(ExprNode node) {
         //section .text
         append("section .text");
         append(SP + "global _main");
@@ -119,40 +119,7 @@ public class Compiler {
         }
     }
 
-    private void writeToFile(String path) throws IOException {
-        try (Writer writer =
-                     new BufferedWriter(
-                             new OutputStreamWriter(
-                                     new FileOutputStream(path), StandardCharsets.UTF_8))) {
-            writer.write(sb.toString());
-        }
-    }
-
-    private void printToConsole() {
-        System.out.println(sb.toString());
-    }
-
-
-    public static void main(String[] args) {
-        String text = "x + 20 * (3 + y)";
-
-        Lexer l = new Lexer(text);
-        List<Token> tokens = l.lex();
-        tokens.removeIf(t -> t.type == TokenType.SPACE);
-
-        Parser p = new Parser(tokens);
-        ExprNode node = p.parseExpression();
-
-        Compiler compiler = new Compiler();
-        compiler.compile32(node);
-
-        compiler.printToConsole();
-
-        try {
-            compiler.writeToFile("program.asm");
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to write program to file");
-        }
-
+    public StringBuilder getInstructs() {
+        return sb;
     }
 }
