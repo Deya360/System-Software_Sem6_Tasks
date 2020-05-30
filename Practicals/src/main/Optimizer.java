@@ -6,10 +6,7 @@ import main.ast.NumberNode;
 import main.ast.VarNode;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,7 +42,7 @@ public class Optimizer {
 
             } else if (rightConst.isConstant()) {
                 if (op==TokenType.ADD && rightConst.isEqualTo(0)) return left;
-                if (op==TokenType.SUB && rightConst.isEqualTo(1)) return left;
+                if (op==TokenType.SUB && rightConst.isEqualTo(0)) return left; //fixed minor typo
                 if (op==TokenType.MUL && rightConst.isEqualTo(1)) return left;
                 if (op==TokenType.DIV && rightConst.isEqualTo(1)) return left;
             }
